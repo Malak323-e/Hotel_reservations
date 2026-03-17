@@ -104,6 +104,10 @@ jobs:
             echo '── Namespace ──'
             kubectl apply -f /tmp/k8s-hotel/namespace.yml
 
+            echo '── Storage ──'
+            kubectl apply -f /tmp/k8s-hotel/pv.yml
+            kubectl apply -f /tmp/k8s-hotel/pvc.yml
+
             echo '── Deployment + Service ──'
             kubectl apply -f /tmp/k8s-hotel/deployment.yml
             kubectl apply -f /tmp/k8s-hotel/service.yml
@@ -120,4 +124,5 @@ jobs:
             echo '── Status ──'
             kubectl get pods -n hotel-reservation
             kubectl get svc  -n hotel-reservation
+
           "
