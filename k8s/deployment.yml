@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotel-app
+  namespace: hotel-reservation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hotel-app
+  template:
+    metadata:
+      labels:
+        app: hotel-app
+    spec:
+      containers:
+      - name: hotel-app
+        image: majda2005/hotel-app:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: SECRET_KEY
+          value: "hotel-secret-key-prod-2024"

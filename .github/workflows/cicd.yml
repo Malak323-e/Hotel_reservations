@@ -1,0 +1,123 @@
+name: Hotel Reservation CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  IMAGE: majda2005/hotel-app
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════════
+  # JOB 1 — Test
+  # ═══════════════════════════════════════════════════════════════════
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check app starts correctly
+        run: |
+          python -c "from app import create_app; app = create_app(); print('App created successfully')"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # JOB 2 — Build & Push Docker Image
+  # ═══════════════════════════════════════════════════════════════════
+  build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          no-cache: true
+          tags: |
+            ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+
+      - name: Image pushed
+        run: echo "Image pushed → ${{ env.IMAGE }}:${{ github.sha }}"
+
+  # ═══════════════════════════════════════════════════════════════════
+  # JOB 3 — Deploy to Kubernetes (master: 63.33.61.65)
+  # ═══════════════════════════════════════════════════════════════════
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.MASTER_IP }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Copy Kubernetes manifests to master
+        run: |
+          ssh -o ConnectTimeout=10 ec2-user@${{ secrets.MASTER_IP }} \
+            "rm -rf /tmp/k8s-hotel && mkdir -p /tmp/k8s-hotel"
+          scp -r k8s/. ec2-user@${{ secrets.MASTER_IP }}:/tmp/k8s-hotel/
+
+      - name: Apply manifests and deploy
+        run: |
+          ssh -o ConnectTimeout=10 ec2-user@${{ secrets.MASTER_IP }} "
+            set -e
+
+            echo '── Namespace ──'
+            kubectl apply -f /tmp/k8s-hotel/namespace.yml
+
+            echo '── Deployment + Service ──'
+            kubectl apply -f /tmp/k8s-hotel/deployment.yml
+            kubectl apply -f /tmp/k8s-hotel/service.yml
+
+            echo '── Rolling update to ${{ github.sha }} ──'
+            kubectl set image deployment/hotel-app \
+              hotel-app=${{ env.IMAGE }}:${{ github.sha }} \
+              -n hotel-reservation
+
+            echo '── Waiting for rollout ──'
+            kubectl rollout status deployment/hotel-app \
+              -n hotel-reservation --timeout=5m
+
+            echo '── Status ──'
+            kubectl get pods -n hotel-reservation
+            kubectl get svc  -n hotel-reservation
+          "

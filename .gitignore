@@ -1,5 +1,7 @@
-venv/
 __pycache__/
 *.pyc
-instance/*.db
+*.pyo
+instance/
+*.db
 .env
+screenshots/
