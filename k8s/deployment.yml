@@ -21,3 +21,10 @@ spec:
         env:
         - name: SECRET_KEY
           value: "hotel-secret-key-prod-2024"
+        volumeMounts:
+        - name: hotel-db
+          mountPath: /app/instance
+      volumes:
+      - name: hotel-db
+        persistentVolumeClaim:
+          claimName: hotel-db-pvc
