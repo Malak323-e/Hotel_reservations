@@ -13,6 +13,16 @@ spec:
       labels:
         app: hotel-app
     spec:
+      initContainers:
+      - name: seed-db
+        image: majda2005/hotel-app:latest
+        command: ["python", "seed.py"]
+        env:
+        - name: SECRET_KEY
+          value: "hotel-secret-key-prod-2024"
+        volumeMounts:
+        - name: hotel-db
+          mountPath: /app/instance
       containers:
       - name: hotel-app
         image: majda2005/hotel-app:latest
