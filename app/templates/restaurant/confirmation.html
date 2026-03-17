@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Réservation confirmée – Hôtel des Quatre Roses{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-20 text-center">
+
+  <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+    </svg>
+  </div>
+
+  <h1 class="font-serif text-4xl text-navy mb-3">Table réservée !</h1>
+  <p class="text-gray-600 mb-10">Merci, {{ reservation.prenom_client }}. Votre table vous attend.</p>
+
+  <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+    <div class="bg-navy px-8 py-6">
+      <p class="text-gold text-xs font-semibold tracking-widest uppercase mb-2">Référence de réservation</p>
+      <p class="font-serif text-3xl text-white font-bold tracking-wider">{{ reservation.reference }}</p>
+    </div>
+
+    <div class="px-8 py-6 space-y-4">
+      <div class="flex justify-between items-center py-3 border-b border-gray-100">
+        <span class="text-gray-500 text-sm">Table</span>
+        <span class="font-medium text-navy">{{ reservation.table_restaurant.numero }} – {{ reservation.table_restaurant.zone }}</span>
+      </div>
+      <div class="flex justify-between items-center py-3 border-b border-gray-100">
+        <span class="text-gray-500 text-sm">Client</span>
+        <span class="font-medium text-navy">{{ reservation.prenom_client }} {{ reservation.nom_client }}</span>
+      </div>
+      <div class="flex justify-between items-center py-3 border-b border-gray-100">
+        <span class="text-gray-500 text-sm">Date</span>
+        <span class="font-medium text-navy">{{ reservation.date_debut.strftime('%d %B %Y') }}</span>
+      </div>
+      <div class="flex justify-between items-center py-3 border-b border-gray-100">
+        <span class="text-gray-500 text-sm">Horaire</span>
+        <span class="font-medium text-navy">
+          {{ reservation.heure_debut.strftime('%H:%M') }} – {{ reservation.heure_fin.strftime('%H:%M') }}
+        </span>
+      </div>
+      <div class="flex justify-between items-center py-3">
+        <span class="text-gray-500 text-sm">Couverts</span>
+        <span class="font-medium text-navy">{{ reservation.nombre_personnes }} personne{{ 's' if reservation.nombre_personnes > 1 }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <a href="{{ url_for('reservations.mes_reservations') }}" class="btn-card-cta" style="padding:0.75rem 2rem;width:auto;">
+      Gérer mes réservations
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
+    <a href="{{ url_for('main.index') }}" class="btn-ghost">Retour à l'accueil</a>
+  </div>
+</div>
+{% endblock %}

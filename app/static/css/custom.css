@@ -1,0 +1,262 @@
+/* ============================================================
+   Hôtel des Quatre Roses – Custom CSS (complements Tailwind)
+   ============================================================ */
+
+/* --- Utility classes referenced in templates --- */
+
+.nav-link {
+  /* Explicit color — avoid @apply opacity modifiers (unreliable with Tailwind CDN) */
+  color: rgba(255, 255, 255, 0.95);
+  @apply px-3 py-2 text-sm font-medium rounded-md transition-all duration-200;
+}
+.nav-link:hover {
+  color: #e8c96a;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.mobile-nav-link {
+  color: rgba(255, 255, 255, 0.95);
+  @apply block px-4 py-2 text-sm font-medium rounded-md transition-all duration-200;
+}
+.mobile-nav-link:hover {
+  color: #e8c96a;
+  @apply bg-navy-light;
+}
+
+.btn-gold {
+  /* Explicit CSS — @apply bg-gold is unreliable with Tailwind CDN in CSS files */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #c9a84c;
+  color: #1a2b4b;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 4px 14px rgba(201, 168, 76, 0.4);
+}
+.btn-gold:hover {
+  background-color: #e8c96a;
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.55);
+  transform: translateY(-1px);
+}
+.btn-gold:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.35);
+}
+.btn-gold[disabled],
+.btn-gold.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.btn-gold svg {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.btn-gold:not([disabled]):hover svg {
+  transform: scale(1.1);
+}
+
+.btn-navy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #1a2b4b;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.btn-navy:hover {
+  background-color: #2a3f6b;
+  transform: translateY(-1px);
+}
+
+/* Card CTA button — clearly looks clickable at rest */
+.btn-card-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;           /* full-width by default for card context */
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 2px solid #c9a84c;
+  color: #c9a84c;
+  background-color: transparent;
+  box-shadow: inset 0 0 0 0 #c9a84c;
+  transition: color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+.btn-card-cta:hover {
+  background-color: #c9a84c;
+  color: #1a2b4b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.35);
+}
+.btn-card-cta svg {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.btn-card-cta:hover svg {
+  transform: translateX(3px);
+}
+
+/* Ghost navy button — secondary action, clearly outlined */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid #1a2b4b;
+  color: #1a2b4b;
+  background-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-ghost:hover {
+  background-color: #1a2b4b;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Hero secondary CTA — explicit CSS to avoid CDN opacity modifier issues */
+.btn-hero-secondary {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 2px solid rgba(201, 168, 76, 0.65);
+  color: #ffffff;
+  background-color: transparent;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+}
+.btn-hero-secondary:hover {
+  border-color: #c9a84c;
+  background-color: rgba(201, 168, 76, 0.1);
+}
+
+/* --- Input fields: warm visible border, luxury feel --- */
+
+.input-field {
+  width: 100%;
+  min-width: 0;                           /* prevent overflow in narrow grids */
+  background-color: #fdfcfa;
+  border: 1.5px solid #c8b99a;           /* warm sand border — clearly visible on white */
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.875rem;
+  font-size: 0.875rem;
+  color: #1a2b4b;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.input-field::placeholder {
+  color: #a09070;
+}
+.input-field:hover {
+  border-color: #a08050;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #c9a84c;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.18);
+  background-color: #fffdf7;
+}
+
+/* Date inputs: constrain the native picker icon so text doesn't overflow */
+input[type="date"].input-field,
+input[type="time"].input-field {
+  padding-right: 0.5rem;
+}
+
+/* Select arrow */
+select.input-field {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c9a84c' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.25rem;
+  cursor: pointer;
+}
+
+/* Textarea */
+textarea.input-field {
+  resize: vertical;
+}
+
+.form-label {
+  @apply block text-xs font-semibold uppercase tracking-wide mb-1.5;
+  color: #7a6a55;
+}
+
+.service-card {
+  @apply block rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl;
+}
+
+/* --- Animations --- */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+/* --- Line clamp utility (fallback) --- */
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- Scrollbar (Webkit) --- */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8f5f0; }
+::-webkit-scrollbar-thumb { background: #c9a84c; border-radius: 3px; }
+
+/* --- Focus visible outline --- */
+
+:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 2px;
+}
+
+/* --- Gold accent bar (top of page) --- */
+
+.gold-accent-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #c9a84c 0%, #e8c96a 50%, #c9a84c 100%);
+}
+
+/* --- Navbar bottom separator --- */
+
+.nav-separator {
+  border-bottom: 1px solid rgba(201, 168, 76, 0.25);
+}
+
+/* --- Print: hide nav & footer --- */
+@media print {
+  nav, footer { display: none; }
+}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmer l'annulation – Hôtel des Quatre Roses{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-20 text-center">
+
+  <!-- Icone avertissement -->
+  <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-8">
+    <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+    </svg>
+  </div>
+
+  <h1 class="font-serif text-3xl text-navy mb-3">Confirmer l'annulation</h1>
+  <p class="text-gray-600 mb-10">Êtes-vous sûr de vouloir annuler cette réservation ? Cette action est irréversible.</p>
+
+  <!-- Carte récapitulatif -->
+  <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-10 text-left">
+    <div class="bg-red-50 border-b border-red-100 px-6 py-4 flex items-center justify-between">
+      <span class="font-mono font-bold text-red-700">{{ reservation.reference }}</span>
+      <span class="text-red-600 text-sm font-medium">À annuler</span>
+    </div>
+
+    <div class="px-6 py-5 space-y-3 text-sm">
+      <div class="flex justify-between">
+        <span class="text-gray-500">Type</span>
+        <span class="font-medium text-navy capitalize">{{ reservation.type_reservation }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-500">Client</span>
+        <span class="font-medium text-navy">{{ reservation.prenom_client }} {{ reservation.nom_client }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-500">Date</span>
+        <span class="font-medium text-navy">{{ reservation.date_debut.strftime('%d %B %Y') }}</span>
+      </div>
+
+      {% if reservation.type_reservation == 'chambre' %}
+      <div class="flex justify-between">
+        <span class="text-gray-500">Chambre</span>
+        <span class="font-medium text-navy">{{ reservation.chambre.numero }} – {{ reservation.chambre.type_chambre }}</span>
+      </div>
+      {% elif reservation.type_reservation == 'restaurant' %}
+      <div class="flex justify-between">
+        <span class="text-gray-500">Table</span>
+        <span class="font-medium text-navy">{{ reservation.table_restaurant.numero }} ({{ reservation.table_restaurant.zone }})</span>
+      </div>
+      {% else %}
+      <div class="flex justify-between">
+        <span class="text-gray-500">Salle</span>
+        <span class="font-medium text-navy">{{ reservation.salle.nom }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <!-- Bouton annuler (POST) -->
+    <form method="POST" action="{{ url_for('reservations.annuler', ref=reservation.reference) }}">
+      <button type="submit"
+              class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold transition-colors">
+        Oui, annuler ma réservation
+      </button>
+    </form>
+    <!-- Bouton retour -->
+    <a href="{{ url_for('reservations.mes_reservations') }}"
+       class="px-8 py-3 rounded-xl font-medium border border-navy text-navy hover:bg-navy hover:text-white transition-all">
+      Non, garder ma réservation
+    </a>
+  </div>
+
+</div>
+{% endblock %}

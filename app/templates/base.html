@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Hôtel des Quatre Roses{% endblock %}</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:    '#1a2b4b',
+            gold:    '#c9a84c',
+            'gold-light': '#e8c96a',
+            cream:   '#f8f5f0',
+            'navy-light': '#2a3f6b',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}" />
+
+  {% block head %}{% endblock %}
+</head>
+<body class="bg-cream font-sans text-gray-800 antialiased">
+
+  <!-- Gold accent bar -->
+  <div class="gold-accent-bar fixed top-0 left-0 right-0 z-[60]"></div>
+
+  <!-- Navbar -->
+  <nav class="fixed top-[3px] left-0 right-0 z-50 bg-navy/95 backdrop-blur-sm shadow-lg nav-separator" x-data="{ open: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="{{ url_for('main.index') }}" class="flex items-center gap-3 group">
+          <div class="w-9 h-9 bg-gold rounded-full flex items-center justify-center text-navy font-bold text-base group-hover:bg-gold-light transition-colors leading-none select-none">✿</div>
+          <span class="text-white font-serif text-lg sm:text-xl tracking-wide">Hôtel des Quatre Roses</span>
+        </a>
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center gap-1">
+          <a href="{{ url_for('chambres.liste') }}" class="nav-link">Chambres</a>
+          <a href="{{ url_for('restaurant.index') }}" class="nav-link">Restaurant</a>
+          <a href="{{ url_for('salles.liste') }}" class="nav-link">Salles de réunion</a>
+          <a href="{{ url_for('reservations.mes_reservations') }}" class="ml-4 px-4 py-2 border border-gold text-gold rounded-full text-sm font-medium hover:bg-gold hover:text-navy transition-all duration-200">
+            Mes réservations
+          </a>
+        </div>
+
+        <!-- Mobile burger -->
+        <button @click="open = !open" class="md:hidden text-white p-2 rounded">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            <path x-show="open"  stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile menu -->
+      <div x-show="open" x-transition class="md:hidden pb-4 space-y-1">
+        <a href="{{ url_for('chambres.liste') }}"             class="mobile-nav-link">Chambres</a>
+        <a href="{{ url_for('restaurant.index') }}"           class="mobile-nav-link">Restaurant</a>
+        <a href="{{ url_for('salles.liste') }}"               class="mobile-nav-link">Salles de réunion</a>
+        <a href="{{ url_for('reservations.mes_reservations') }}" class="mobile-nav-link">Mes réservations</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="fixed top-24 right-4 z-50 space-y-2" x-data="{ show: true }" x-init="setTimeout(() => show = false, 4000)">
+        {% for category, message in messages %}
+          <div x-show="show" x-transition
+               class="px-5 py-3 rounded-lg shadow-lg text-sm font-medium
+                      {% if category == 'success' %}bg-green-600 text-white
+                      {% elif category == 'error' %}bg-red-600 text-white
+                      {% else %}bg-navy text-white{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Page content -->
+  <main class="pt-[67px]">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-navy text-white mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 bg-gold rounded-full flex items-center justify-center text-navy font-bold text-base leading-none select-none">✿</div>
+            <span class="font-serif text-xl">Hôtel des Quatre Roses</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed">Fondé par quatre femmes passionnées, un établissement d'exception alliant confort moderne et hospitalité authentique au cœur de la ville.</p>
+        </div>
+        <div>
+          <h4 class="font-serif text-gold mb-4">Nos services</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="{{ url_for('chambres.liste') }}" class="hover:text-gold transition-colors">Chambres & Suites</a></li>
+            <li><a href="{{ url_for('restaurant.index') }}" class="hover:text-gold transition-colors">Restaurant</a></li>
+            <li><a href="{{ url_for('salles.liste') }}" class="hover:text-gold transition-colors">Salles de réunion</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-serif text-gold mb-4">Contact</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li>123 Avenue des Palmiers, Marrakech</li>
+            <li>+212 5 24 00 00 00</li>
+            <li>contact@hotel-des-quatre-roses.ma</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-serif text-gold mb-4">Notre Histoire</h4>
+          <p class="text-gray-400 text-sm leading-relaxed">Quatre femmes, une vision commune : créer un havre d'élégance et de chaleur. L'Hôtel des Quatre Roses est né de leur passion pour l'hospitalité et leur amour du beau.</p>
+        </div>
+      </div>
+      <div class="border-t border-navy-light mt-8 pt-6 text-center text-gray-500 text-xs">
+        © 2025 Hôtel des Quatre Roses. Tous droits réservés.
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

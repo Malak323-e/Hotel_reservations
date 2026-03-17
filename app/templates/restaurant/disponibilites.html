@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Tables disponibles – Hôtel des Quatre Roses{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+  <div class="text-center mb-10">
+    <h1 class="font-serif text-4xl text-navy mb-3">Tables disponibles</h1>
+    <p class="text-gray-600">
+      Le {{ date_str }} de {{ heure_debut }} à {{ heure_fin }}
+      – {{ personnes }} personne{{ 's' if personnes > 1 }}
+    </p>
+    <a href="{{ url_for('restaurant.index') }}" class="text-gold text-sm hover:underline mt-2 inline-block">
+      ← Modifier la recherche
+    </a>
+  </div>
+
+  {% if erreur %}
+  <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mb-8">
+    {{ erreur }}
+  </div>
+  {% endif %}
+
+  {% if tables %}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for table in tables %}
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+      <!-- Zone badge header -->
+      <div class="{% if table.zone == 'VIP' %}bg-gold{% elif table.zone == 'Terrasse' %}bg-green-600{% else %}bg-navy{% endif %} px-6 py-4 flex items-center justify-between">
+        <span class="text-white font-serif text-lg">Table {{ table.numero }}</span>
+        <span class="text-white text-xs font-semibold bg-white/20 px-3 py-1 rounded-full">{{ table.zone }}</span>
+      </div>
+
+      <div class="p-6">
+        <div class="flex items-center gap-2 text-gray-600 text-sm mb-6">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Capacité : {{ table.capacite }} personnes maximum
+        </div>
+
+        <!-- Formulaire inline -->
+        <form method="POST" action="{{ url_for('restaurant.reserver') }}" class="space-y-4">
+          <input type="hidden" name="table_id"    value="{{ table.id }}" />
+          <input type="hidden" name="date"        value="{{ date_str }}" />
+          <input type="hidden" name="heure_debut" value="{{ heure_debut }}" />
+          <input type="hidden" name="heure_fin"   value="{{ heure_fin }}" />
+          <input type="hidden" name="personnes"   value="{{ personnes }}" />
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="form-label">Nom *</label>
+              <input type="text" name="nom" class="input-field" required />
+            </div>
+            <div>
+              <label class="form-label">Prénom *</label>
+              <input type="text" name="prenom" class="input-field" required />
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Email *</label>
+            <input type="email" name="email" class="input-field" required />
+          </div>
+          <div>
+            <label class="form-label">Téléphone</label>
+            <input type="tel" name="telephone" class="input-field" />
+          </div>
+          <div>
+            <label class="form-label">Commentaire</label>
+            <textarea name="commentaire" rows="2" class="input-field resize-none"
+                      placeholder="Allergie, occasion spéciale..."></textarea>
+          </div>
+          <button type="submit" class="w-full btn-gold py-3 rounded-xl font-medium">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            Réserver cette table
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+    {% if not erreur %}
+    <div class="text-center py-16">
+      <div class="text-6xl mb-4">🍽️</div>
+      <p class="font-serif text-2xl text-navy mb-2">Aucune table disponible</p>
+      <p class="text-gray-500 mb-6">Il n'y a pas de table disponible pour ce créneau avec {{ personnes }} personne{{ 's' if personnes > 1 }}.</p>
+      <a href="{{ url_for('restaurant.index') }}" class="btn-card-cta" style="display:inline-flex;width:auto;padding:0.75rem 2rem;">
+        Modifier la recherche
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+    {% endif %}
+  {% endif %}
+
+</div>
+{% endblock %}
