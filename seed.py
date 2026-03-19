@@ -43,7 +43,7 @@ TABLES = [
 SALLES = [
     dict(nom="Salle Atlas", capacite=20, prix_heure=120,
          equipements="Projecteur HD, Tableau blanc, WiFi fibre, Climatisation, Micro sans fil",
-         photo_url=UNSPLASH + "1524758631624-e2822132143a?w=800"),
+         photo_url=UNSPLASH + "1517502884422-41eaead166d4?w=800"),
     dict(nom="Salle Sahara", capacite=50, prix_heure=250,
          equipements="Scène, Sono professionnelle, Projecteur 4K, WiFi fibre, Climatisation, Podium",
          photo_url=UNSPLASH + "1497366216548-37526070297c?w=800"),
@@ -60,20 +60,32 @@ def seed():
     with app.app_context():
         db.create_all()
 
-        if Chambre.query.count() == 0:
-            for data in CHAMBRES:
+        for data in CHAMBRES:
+            obj = Chambre.query.filter_by(numero=data["numero"]).first()
+            if obj:
+                for k, v in data.items():
+                    setattr(obj, k, v)
+            else:
                 db.session.add(Chambre(**data))
-            print(f"✓ {len(CHAMBRES)} chambres ajoutées")
+        print(f"✓ {len(CHAMBRES)} chambres synchronisées")
 
-        if TableRestaurant.query.count() == 0:
-            for data in TABLES:
+        for data in TABLES:
+            obj = TableRestaurant.query.filter_by(numero=data["numero"]).first()
+            if obj:
+                for k, v in data.items():
+                    setattr(obj, k, v)
+            else:
                 db.session.add(TableRestaurant(**data))
-            print(f"✓ {len(TABLES)} tables de restaurant ajoutées")
+        print(f"✓ {len(TABLES)} tables de restaurant synchronisées")
 
-        if SalleReunion.query.count() == 0:
-            for data in SALLES:
+        for data in SALLES:
+            obj = SalleReunion.query.filter_by(nom=data["nom"]).first()
+            if obj:
+                for k, v in data.items():
+                    setattr(obj, k, v)
+            else:
                 db.session.add(SalleReunion(**data))
-            print(f"✓ {len(SALLES)} salles de réunion ajoutées")
+        print(f"✓ {len(SALLES)} salles de réunion synchronisées")
 
         db.session.commit()
         print("Base de données initialisée avec succès.")
